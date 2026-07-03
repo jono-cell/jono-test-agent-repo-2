@@ -15,6 +15,8 @@ allowed-tools:
 This skill demonstrates the two ways a skill collects input:
 the fast **typed-argument** path and the guided **AskUserQuestion** fallback.
 
+The valid environments are exactly: `staging`, `production`, `canary`.
+
 ## 1. Resolve the target environment
 
 - If `$environment` is provided (the first argument), use it directly.
@@ -24,7 +26,10 @@ the fast **typed-argument** path and the guided **AskUserQuestion** fallback.
     - question: "Which environment should I deploy to?"
     - header: "Environment"
     - options: "staging", "production", "canary"
-  Use their selection as the environment.
+- Restrict to the listed options. `AskUserQuestion` always shows an "Other"
+  free-text choice that cannot be hidden — if the user answers with anything
+  other than `staging`, `production`, or `canary`, reject it and ask the same
+  question again until they pick a valid option.
 
 ## 2. Resolve whether to run migrations
 
@@ -33,12 +38,17 @@ the fast **typed-argument** path and the guided **AskUserQuestion** fallback.
     - question: "Run database migrations before deploying?"
     - header: "Migrations"
     - options: "Yes, migrate first", "No, skip migrations"
+- Same rule: if the answer is not one of the two listed options, ask again
+  until it is.
 
-## 3. Show the plan (this demo stops here — it does not really deploy)
+## 3. Output the selected items (this demo stops here — no real deploy)
 
-Print a summary the user can confirm, e.g.:
+Echo the validated selections back to the user exactly, then the plan:
 
-> Would deploy to **<environment>**, migrations: **<yes/no>**.
+> **Selected environment:** <environment>
+> **Selected migrations:** <Yes / No>
+>
+> Plan: would deploy to **<environment>**, migrations **<yes/no>**.
 
 Do NOT run any real deploy commands — this skill exists to demonstrate
 argument handling, not to ship anything.
